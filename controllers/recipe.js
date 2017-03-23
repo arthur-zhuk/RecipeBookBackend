@@ -9,13 +9,15 @@ function decodeToken(token) {
 
 exports.addrecipe = function(req, res, next) {
 
+  console.log(req.body);
+  console.log(req.headers);
   const recipeName = req.body.recipeName;
-  const ingredients = req.body.ingredients;
+  const ingredients = req.body.ingredients.split(',');
+  console.log(ingredients);
   const authorId = decodeToken(req.headers.authorization);
-  console.log(authorId.sub);
+
 
   // Recipe schema that connects to User to have recipe unique to the user???
-
   User.findById(authorId.sub, function(err, user) {
     if (err) {
       res.status(500).send(err);
