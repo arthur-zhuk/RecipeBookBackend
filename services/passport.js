@@ -9,31 +9,21 @@ const LocalStrategy = require('passport-local');
 const localOptions = { usernameField: 'email' };
 const localLogin = new LocalStrategy(localOptions, function(email, password, done) {
   // Verify this email and passord, call done with the user
-  // if it is the correct email and password otherwise, call done with false 
-  console.log(email, password);
-  User.findOne({ email: email }, function(err, user) {
-    console.log(user);
+  // if it is the correct email and password otherwise, call done with false
+  User.findOne({ email: email }, function (err, user){
     if (err) { return done(err); }
     if (!user) { return done(null, false); }
-
     // compare passwords - is `password` equal to user.password?
     user.comparePassword(password, function(err, isMatch) {
-      console.log(password);
-      if (err) { 
-        console.log('im in err')
+      if (err) {
         return done(err);
       }
-      console.log(isMatch);
-
-      if (!isMatch) { 
-        console.log('failed to match')
-        return done(null, false); 
+      if (!isMatch) {
+        return done(null, false);
       }
-
-      console.log('made it out');
       return done(null, user);
-    })     
-  }) 
+    })
+  })
 })
 
 // Set up options for JWT strategy
@@ -48,7 +38,6 @@ const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
   // see if the user ID in the payload exists in our database
   // if it does, call 'done' with that user otherwise call done
   // without a user object.
-
   User.findById(payload.sub, function(err, user) {
     if (err) { return done(err, false); }
 
@@ -61,5 +50,5 @@ const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
 });
 
 // Tell passport ot use this strategy
-passport.use(jwtLogin);
-passport.use(localLogin);
+passport.use('jwt', jwtLogin);
+passport.use('local', localLogin);

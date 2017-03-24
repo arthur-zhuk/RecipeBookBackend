@@ -7,10 +7,14 @@ const userSchema = new Schema({
   email: { type: String, unique: true, lowercase: true },
   password: String,
   recipes: [
+    // {
+    //   recipeName: String,
+    //   ingredients: [String],
+    //   date: { type: Date, default: Date.now }
+    // }
     {
-      recipeName: String, 
-      ingredients: [String], 
-      date: { type: Date, default: Date.now }
+      type: Schema.Types.ObjectId,
+      ref: 'Recipe'
     }
   ]
 });
@@ -18,11 +22,12 @@ const userSchema = new Schema({
 
 // On save Hook, encrypt password
 // Before saving a model, run this function
-userSchema.pre('save', function(next) {
+userSchema.pre('save', function(next, done) {
   // get access to the user model
-  console.log(`this is:${this}`);
-  const user = this; 
-
+  const user = this;
+  if (!user.isModified('password')) {
+    return done();
+  }
   // generate a salt, then run callback
   bcrypt.genSalt(10, function(err, salt) {
     if (err) { return next(err); }
@@ -40,11 +45,8 @@ userSchema.pre('save', function(next) {
 
 userSchema.methods.comparePassword = function(candidatePassword, callback) {
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-    console.log(`user schema: ${this.password}, ${candidatePassword}`)
-    if (err) return callback(err);
-
-    callback(null, isMatch);
-  });
+    callback(err, isMatch);
+  })
 }
 // Create the model class
 const ModelClass = mongoose.model('User', userSchema);
