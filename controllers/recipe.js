@@ -8,17 +8,13 @@ function decodeToken(token) {
 }
 
 exports.addrecipe = function(req, res, next) {
-
-  console.log(req.body);
-  console.log(req.headers);
   const recipeName = req.body.recipeName;
-  const ingredients = req.body.ingredients.split(',');
-  console.log(ingredients);
+  let ingredients = req.body.ingredients.split(',');
+  ingredients = ingredients.map(e => e.trim());
   const authorId = decodeToken(req.headers.authorization);
 
-
   // Recipe schema that connects to User to have recipe unique to the user???
-  User.findById(authorId.sub, function(err, user) {
+  User.findOne({ email: email }, function(err, user) {
     if (err) {
       res.status(500).send(err);
     } else {
@@ -27,11 +23,18 @@ exports.addrecipe = function(req, res, next) {
         ingredients: [...ingredients],
         author: user.email
       });
+      
 
       freshRec.save((err) => {
         if (err) return next(err) 
-        res.json(freshRec);
-      })
+      });
+
+      user.recipes.push({recipeName: recipeName, ingredients: [...ingredients]}); 
+
+      user.save((err, updatedUser) => {
+        if (err) return next(err); 
+        res.json(updatedUser);
+      });
     }
   });
 }
@@ -40,5 +43,12 @@ exports.getrecipe = function(req, res, next) {
   Recipe.find(function(err, results) {
     if (err) return next(err);
     res.send(results);
+  })
+}
+
+exports.getcurrentuserrecipes = function(req, res, next) {
+  User.findById(authorId.sub, function(err, results) {
+    if (err) return next(err);
+    res.send(results.recipes);
   })
 }

@@ -5,14 +5,22 @@ const bcrypt = require('bcrypt-nodejs');
 // Define our model
 const userSchema = new Schema({
   email: { type: String, unique: true, lowercase: true },
-  password: String
-})
+  password: String,
+  recipes: [
+    {
+      recipeName: String, 
+      ingredients: [String], 
+      date: { type: Date, default: Date.now }
+    }
+  ]
+});
 
 
 // On save Hook, encrypt password
 // Before saving a model, run this function
 userSchema.pre('save', function(next) {
   // get access to the user model
+  console.log(`this is:${this}`);
   const user = this; 
 
   // generate a salt, then run callback
@@ -32,6 +40,7 @@ userSchema.pre('save', function(next) {
 
 userSchema.methods.comparePassword = function(candidatePassword, callback) {
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    console.log(`user schema: ${this.password}, ${candidatePassword}`)
     if (err) return callback(err);
 
     callback(null, isMatch);
