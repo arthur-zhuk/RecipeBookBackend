@@ -16,7 +16,7 @@ userSchema.pre('save', function(next, done) {
   // get access to the user model
   const user = this;
   if (!user.isModified('password')) {
-    return done();
+    return next();
   }
   // generate a salt, then run callback
   bcrypt.genSalt(10, function(err, salt) {

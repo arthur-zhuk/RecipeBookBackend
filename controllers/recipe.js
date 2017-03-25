@@ -20,16 +20,12 @@ exports.addrecipe = function(req, res, next) {
           ingredients: [...ingredients],
           author: user.email
         });
-        console.log(user);
-        console.log(freshRec);
-
-        user.recipes.push(freshRec.id);
-        user.save(function(err) {
-          if (err) return next(err);
-        });
         freshRec.save((err, savedRec) => {
           if (err) return next(err);
-          res.json(freshRec);
+          user.save({recipes: user.recipes.push(savedRec._id)}, function(err) {
+            if (err) return next(err);
+            res.json(freshRec);
+          });
         });
      }
   });
@@ -43,18 +39,10 @@ exports.getrecipe = function(req, res, next) {
 }
 
 exports.getcurrentuserrecipes = function(req, res, next) {
-  /*
-  User.find({})
-    .populate('recipes')
-    .exec(function(err, results) {
-      if (err) return next(err);
-    })
-  */
-  
   User.findById(req.user._id)
     .populate('recipes')
     .exec(function(err, user) {
       if (err) return next(err);
-      res.json(user);
+      res.json(user.recipes);
     });
 }
