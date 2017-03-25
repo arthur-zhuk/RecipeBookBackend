@@ -9,34 +9,30 @@ function decodeToken(token) {
 
 exports.addrecipe = function(req, res, next) {
   const recipeName = req.body.recipeName;
-  let ingredients = req.body.ingredients.split(',');
-    ingredients = ingredients.map(e => e.trim());
-  const authorId = decodeToken(req.headers.authorization);
+  let ingredients = req.body.ingredients.split(',').map(e => e.trim());
 
-  // Recipe schema that connects to User to have recipe unique to the user???
-  //User.findOne(req.user._id, function(err, user) {
-  if (err) {
-    res.status(500).send(err);
-  } else {
-    const freshRec = new Recipe({
-      recipeName: recipeName,
-      ingredients: [...ingredients],
-      author: user.email
-    });
+  User.findById(req.user._id, function(err, user) {
+    if (err) {
+     res.status(500).send(err);
+    } else {
+        const freshRec = new Recipe({
+          recipeName: recipeName,
+          ingredients: [...ingredients],
+          author: user.email
+        });
+        console.log(user);
+        console.log(freshRec);
 
-    freshRec.save((err) => {
-      if (err) return next(err)
-      next(res.json(freshRec));
-    });
-
-      //user.recipes.push({recipeName: recipeName, ingredients: [...ingredients]});
-
-      //user.save((err, updatedUser) => {
-        //if (err) return next(err);
-        //res.json(updatedUser);
-      //});
-    }
-  // });
+        user.recipes.push(freshRec.id);
+        user.save(function(err) {
+          if (err) return next(err);
+        });
+        freshRec.save((err, savedRec) => {
+          if (err) return next(err);
+          res.json(freshRec);
+        });
+     }
+  });
 }
 
 exports.getrecipe = function(req, res, next) {
@@ -47,10 +43,18 @@ exports.getrecipe = function(req, res, next) {
 }
 
 exports.getcurrentuserrecipes = function(req, res, next) {
+  /*
   User.find({})
     .populate('recipes')
     .exec(function(err, results) {
-    if (err) return next(err);
-    console.log(results);
-  })
+      if (err) return next(err);
+    })
+  */
+  
+  User.findById(req.user._id)
+    .populate('recipes')
+    .exec(function(err, user) {
+      if (err) return next(err);
+      res.json(user);
+    });
 }

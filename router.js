@@ -11,6 +11,6 @@ module.exports = function(app) {
   app.post('/signup', Authentication.signup);
   app.post('/postrecipe', requireAuth, RecipeMethods.addrecipe);
   app.get('/allrecipes', RecipeMethods.getrecipe);
-  app.get('/my_recipes', RecipeMethods.getcurrentuserrecipes);
+  app.get('/my_recipes', requireAuth, RecipeMethods.getcurrentuserrecipes);
 };
 

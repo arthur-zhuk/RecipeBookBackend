@@ -6,17 +6,7 @@ const bcrypt = require('bcrypt-nodejs');
 const userSchema = new Schema({
   email: { type: String, unique: true, lowercase: true },
   password: String,
-  recipes: [
-    // {
-    //   recipeName: String,
-    //   ingredients: [String],
-    //   date: { type: Date, default: Date.now }
-    // }
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Recipe'
-    }
-  ]
+  recipes: [{type: Schema.Types.ObjectId, ref: 'Recipe'}]
 });
 
 
