@@ -12,5 +12,6 @@ module.exports = function(app) {
   app.post('/postrecipe', requireAuth, RecipeMethods.addrecipe);
   app.get('/allrecipes', RecipeMethods.getrecipe);
   app.get('/my_recipes', requireAuth, RecipeMethods.getcurrentuserrecipes);
+  app.delete('/deleterecipe', requireAuth, RecipeMethods.deleterecipe);
 };
 

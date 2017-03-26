@@ -7,6 +7,24 @@ function decodeToken(token) {
   return jwt.decode(token, config.secret);
 }
 
+exports.deleterecipe = function(req, res, next) {
+  console.log('query ' + req.query.id);
+  Recipe.findByIdAndRemove(req.query.id, function (err, recipe) {
+    let response = {
+      message: 'Recipe Successfully Removed',
+      id: recipe._id 
+    };
+    User.findById(req.user._id, function(err, user) {
+      for (let i = 0; i <= user.recipes.length; i++) {
+        if (user.recipes[i] === req.query.id) {
+          
+        }
+      }
+    })
+    res.send(response);
+  });
+}
+
 exports.addrecipe = function(req, res, next) {
   const recipeName = req.body.recipeName;
   let ingredients = req.body.ingredients.split(',').map(e => e.trim());
