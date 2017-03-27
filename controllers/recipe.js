@@ -8,30 +8,19 @@ function decodeToken(token) {
 }
 
 exports.deleterecipe = function(req, res, next) {
-  console.log('query ' + req.query.id);
-    console.log(req.user.recipes);
-    User.findById(req.user._id, function(err, user) {
-      console.log('user is' + user)
-      user.update({
-        $pull: {
-          recipes: {
-            $oid: req.query.id
-          }
-        }
-      }, {
-        safe: true
-      }, function(err, obj) {
-        console.log(obj);
-        Recipe.findByIdAndRemove(req.query.id, function (err, recipe) {
-          let response = {
-            message: 'Recipe Successfully Removed',
-            id: recipe._id 
-          };
-          console.log(`response is ${response}`);
-          res.send(response);
-        })
+  User.findOneAndUpdate(req.user._id, {$pull: {recipes: req.query.id}}, function(err, user) {
+    if (err) { 
+      return res.status(500).json({ 'error': 'error in deleting recipe from user' });
+    }
+    Recipe.findByIdAndRemove(req.query.id, function (err, recipe) {
+      let response = {
+        message: 'Recipe Successfully Removed',
+        id: recipe._id 
+      };
+      console.log(recipe._id);
+      res.json(recipe._id);
     })
-  });
+  })
 }
 
 exports.addrecipe = function(req, res, next) {
