@@ -1,10 +1,10 @@
 const Recipe = require('../models/recipes');
 const User = require('../models/user');
 const jwt = require('jwt-simple');
-const config = require('../config');
+//const config = require('../config');
 
 function decodeToken(token) {
-  return jwt.decode(token, config.secret);
+  return jwt.decode(token, process.env.SECRET);
 }
 
 exports.deleterecipe = function(req, res, next) {
