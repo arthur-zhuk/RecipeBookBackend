@@ -7,6 +7,8 @@ const app = express();
 const router = require('./router');
 const mongoose = require("mongoose");
 const cors = require('cors');
+const dotenv = require('dotenv');
+dotenv.load();
 
 // DB Setup
 mongoose.connect('mongodb://azhuk:testpass123@ds127988.mlab.com:27988/redux_client');
