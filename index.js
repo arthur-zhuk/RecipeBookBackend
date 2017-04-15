@@ -11,7 +11,8 @@ const dotenv = require('dotenv');
 dotenv.load();
 
 // DB Setup
-mongoose.connect('mongodb://azhuk:testpass123@ds127988.mlab.com:27988/redux_client');
+const MONGO_CONNECTION = process.env.MONGO_URI
+mongoose.connect(MONGO_CONNECTION);
 
 // App Setup
 app.use(morgan('combined'));
