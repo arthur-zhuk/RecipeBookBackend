@@ -23,6 +23,12 @@ exports.deleterecipe = function(req, res, next) {
   })
 }
 
+/*
+exports.editrecipe = (req, res, next) => {
+  
+}
+*/
+
 exports.addrecipe = function(req, res, next) {
   const recipeName = req.body.recipeName;
   let ingredients = req.body.ingredients.split(',').map(e => e.trim());
@@ -47,10 +53,20 @@ exports.addrecipe = function(req, res, next) {
   });
 }
 
+const hideEmail = (results) => {
+  for (let item of results) {
+    let tempEmail = item.email; 
+    let nameMatch = tempEmail.match(/^([^@]*)@/)[1];
+    item.email = nameMatch;
+  }
+  return results;
+}
+
 exports.getrecipe = function(req, res, next) {
   Recipe.find(function(err, results) {
     if (err) return next(err);
-    res.send(results);
+    console.log(results);   
+    res.send(hideEmail(results));
   })
 }
 
@@ -62,3 +78,4 @@ exports.getcurrentuserrecipes = function(req, res, next) {
       res.json(user.recipes);
     });
 }
+
