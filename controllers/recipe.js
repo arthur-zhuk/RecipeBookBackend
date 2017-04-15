@@ -53,11 +53,11 @@ exports.addrecipe = function(req, res, next) {
   });
 }
 
-const hideEmail = (results) => {
+function hideEmail(results) {
   for (let item of results) {
-    let tempEmail = item.email; 
+    let tempEmail = item.author; 
     let nameMatch = tempEmail.match(/^([^@]*)@/)[1];
-    item.email = nameMatch;
+    item.author = nameMatch;
   }
   return results;
 }
@@ -65,7 +65,6 @@ const hideEmail = (results) => {
 exports.getrecipe = function(req, res, next) {
   Recipe.find(function(err, results) {
     if (err) return next(err);
-    console.log(results);   
     res.send(hideEmail(results));
   })
 }
