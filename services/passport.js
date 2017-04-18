@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const LocalStrategy = require('passport-local');
-dotenv.load();
+//dotenv.load();
 
 // Create local strategy
 const localOptions = { usernameField: 'email' };
