@@ -17,17 +17,27 @@ exports.deleterecipe = function(req, res, next) {
         message: 'Recipe Successfully Removed',
         id: recipe._id 
       };
-      console.log(recipe._id);
       res.json(recipe._id);
     })
   })
 }
 
-/*
 exports.editrecipe = (req, res, next) => {
-  
+  console.log(`user id: ${req.user._id} recipeID: ${req.query.id}`);
+  let editIngs = req.body.editIngs.split(',').map(e => e.trim());
+  User.findById(req.user._id, function(err, user) {
+    if (err) return res.status(500).json({ 'error': 'error obtaining user'  })
+    console.log('edit name and edit ings');
+    console.log(req.body.editName, req.body.editIngs);
+    Recipe.findByIdAndUpdate(req.query.id, { recipeName: req.body.editName, ingredients: [...editIngs] }, function (err, doc) {
+      console.log(`is it getting into the recipe function?`)
+      if (err) return res.status(500).json({ 'error': 'error editing recipe' }) 
+      res.send(doc);
+      console.log(`doc contains the below`)
+      console.log(doc);
+    })
+  })  
 }
-*/
 
 exports.addrecipe = function(req, res, next) {
   const recipeName = req.body.recipeName;
@@ -35,7 +45,7 @@ exports.addrecipe = function(req, res, next) {
 
   User.findById(req.user._id, function(err, user) {
     if (err) {
-     res.status(500).send(err);
+     res.status(500).send(`addrecipe error ${err}`);
     } else {
         const freshRec = new Recipe({
           recipeName: recipeName,
