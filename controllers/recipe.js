@@ -1,6 +1,10 @@
 const Recipe = require('../models/recipes');
 const User = require('../models/user');
 const jwt = require('jwt-simple');
+const dotenv = require('dotenv');
+
+dotenv.load();
+
 //const config = require('../config');
 
 function decodeToken(token) {
@@ -8,7 +12,7 @@ function decodeToken(token) {
 }
 
 exports.deleterecipe = function(req, res, next) {
-  User.findOneAndUpdate(req.user._id, {$pull: {recipes: req.query.id}}, function(err, user) {
+  User.findOneAndUpdate(req.user._id, {recipes: req.query.id}, function(err, user) {
     if (err) { 
       return res.status(500).json({ 'error': 'error in deleting recipe from user' });
     }
@@ -29,13 +33,13 @@ exports.editrecipe = (req, res, next) => {
     if (err) return res.status(500).json({ 'error': 'error obtaining user'  })
     console.log('edit name and edit ings');
     console.log(req.body.editName, req.body.editIngs);
-    Recipe.findByIdAndUpdate(req.query.id, { recipeName: req.body.editName, ingredients: [...editIngs] }, function (err, doc) {
+    Recipe.findByIdAndUpdate(req.query.id, { recipeName: req.body.editName, ingredients: [...editIngs] }, {new: true}, function (err, doc) {
       console.log(`is it getting into the recipe function?`)
       if (err) return res.status(500).json({ 'error': 'error editing recipe' }) 
-      res.send(doc);
-      console.log(`doc contains the below`)
+      res.json(doc);
+      console.log(`updatedRec contains the below`)
       console.log(doc);
-    })
+      })
   })  
 }
 

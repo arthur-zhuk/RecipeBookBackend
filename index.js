@@ -11,8 +11,9 @@ const dotenv = require('dotenv');
 dotenv.load();
 
 // DB Setup
-const MONGO_CONNECTION = process.env.MONGO_URI
+const MONGO_CONNECTION = process.env.MONGO_URI;
 mongoose.connect(MONGO_CONNECTION);
+mongoose.Promise = require('bluebird'); 
 
 // App Setup
 app.use(morgan('combined'));
