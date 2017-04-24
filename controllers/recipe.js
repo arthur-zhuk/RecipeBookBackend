@@ -27,18 +27,12 @@ exports.deleterecipe = function(req, res, next) {
 }
 
 exports.editrecipe = (req, res, next) => {
-  console.log(`user id: ${req.user._id} recipeID: ${req.query.id}`);
   let editIngs = req.body.editIngs.split(',').map(e => e.trim());
   User.findById(req.user._id, function(err, user) {
     if (err) return res.status(500).json({ 'error': 'error obtaining user'  })
-    console.log('edit name and edit ings');
-    console.log(req.body.editName, req.body.editIngs);
     Recipe.findByIdAndUpdate(req.query.id, { recipeName: req.body.editName, ingredients: [...editIngs] }, {new: true}, function (err, doc) {
-      console.log(`is it getting into the recipe function?`)
       if (err) return res.status(500).json({ 'error': 'error editing recipe' }) 
       res.json(doc);
-      console.log(`updatedRec contains the below`)
-      console.log(doc);
       })
   })  
 }
@@ -46,6 +40,7 @@ exports.editrecipe = (req, res, next) => {
 exports.addrecipe = function(req, res, next) {
   const recipeName = req.body.recipeName;
   let ingredients = req.body.ingredients.split(',').map(e => e.trim());
+  let steps = req.body.steps;
 
   User.findById(req.user._id, function(err, user) {
     if (err) {
@@ -54,6 +49,7 @@ exports.addrecipe = function(req, res, next) {
         const freshRec = new Recipe({
           recipeName: recipeName,
           ingredients: [...ingredients],
+          steps: steps,
           author: user.email
         });
         freshRec.save((err, savedRec) => {
